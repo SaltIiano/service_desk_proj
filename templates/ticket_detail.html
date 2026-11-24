@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Заявка №{{ ticket.number }} — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div><a class="back-link" href="{{ url_for('index') }}">← К списку заявок</a>
+        <div class="title-inline"><h1>Заявка №{{ ticket.number }}</h1><span
+                class="status status-{{ 'open' if ticket.status == 'Открыта' else 'work' if ticket.status == 'В работе' else 'closed' if ticket.status == 'Закрыта' else 'cancelled' }}">{{ ticket.status }}</span>
+        </div>
+        <p class="muted">Создана {{ ticket.created_at|datetime }}</p></div>
+    <a class="btn primary" href="{{ url_for('ticket_edit', ticket_id=ticket.id) }}">✎ Редактировать</a></div>
+<div class="detail-grid">
+    <section class="panel main-detail">
+        <div class="eyebrow">ОБРАЩЕНИЕ</div>
+        <h2>{{ ticket.title }}</h2>
+        <p class="description">{{ ticket.description }}</p>
+        <div class="progress-label"><span>Прогресс выполнения</span><strong>{{ ticket.progress }}%</strong></div>
+        <div class="progress large"><span style="width: {{ ticket.progress }}%"></span></div>
+    </section>
+    <section class="panel">
+        <div class="eyebrow">НАЗНАЧЕНИЕ</div>
+        <dl class="details">
+            <dt>Клиент</dt>
+            <dd>{{ ticket.client_name }}</dd>
+            <dt>Исполнитель</dt>
+            <dd>{{ ticket.employee_name }}</dd>
+            <dt>Оборудование</dt>
+            <dd>{{ ticket.equipment_name }}</dd>
+            <dt>Обновлена</dt>
+            <dd>{{ ticket.updated_at|datetime }}</dd>
+        </dl>
+    </section>
+</div>
+{% if current_user.role == 'admin' %}
+<div class="danger-zone">
+    <div><strong>Удаление заявки</strong>
+        <p class="muted">Действие нельзя отменить.</p></div>
+    <form method="post" action="{{ url_for('ticket_delete', ticket_id=ticket.id) }}"
+          onsubmit="return confirm('Удалить эту заявку без возможности восстановления?')"><input type="hidden"
+                                                                                                 name="_csrf_token"
+                                                                                                 value="{{ csrf_token() }}">
+        <button class="btn danger" type="submit">Удалить заявку</button>
+    </form>
+</div>{% endif %}
+{% endblock %}

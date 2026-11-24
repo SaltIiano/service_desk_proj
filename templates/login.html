@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Вход — Service Desk{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="login-icon">SD</div>
+    <h1>Вход в Service Desk</h1>
+    <p class="muted">Введите данные своей учётной записи</p>
+    <form method="post">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <label>Логин<input name="username" required minlength="3" autocomplete="username" autofocus></label>
+      <label>Пароль<input name="password" type="password" required autocomplete="current-password"></label>
+
+      <div class="consent-block">
+        <label class="consent-label">
+          <input type="checkbox" name="agree_privacy" id="agree_privacy" required>
+          <span>Я принимаю
+            <a href="https://policies.google.com/privacy?hl=ru&client_theme=dark"
+               target="_blank" rel="noopener noreferrer">политику конфиденциальности</a>
+          </span>
+        </label>
+        <label class="consent-label">
+          <input type="checkbox" name="agree_personal_data" id="agree_personal_data" required>
+          <span>Я даю
+            <a href="https://www.consultant.ru/document/cons_doc_LAW_61801/"
+               target="_blank" rel="noopener noreferrer">согласие на обработку персональных данных</a>
+          </span>
+        </label>
+      </div>
+
+      <button class="btn primary full" type="submit">Войти в систему</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

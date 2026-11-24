@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Отчёты — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">АНАЛИТИКА</div>
+        <h1>Отчётность</h1>
+        <p class="muted">Сводная статистика по заявкам и ресурсам</p></div>
+    <button class="btn secondary" onclick="window.print()">⤓ Печать отчёта</button>
+</div>
+<div class="stats-grid">
+    <div class="stat-card"><span>Всего заявок</span><strong>{{ report.total }}</strong><small>Все обращения в
+        системе</small></div>
+    <div class="stat-card"><span>Открытые / в работе</span><strong>{{ report.opened }}</strong><small>Требуют
+        внимания</small></div>
+    <div class="stat-card"><span>Завершено</span><strong>{{ report.complete }}</strong><small>Закрытые заявки</small>
+    </div>
+    <div class="stat-card"><span>Отменено</span><strong>{{ report.cancelled }}</strong><small>Отменённые заявки</small>
+    </div>
+    <div class="stat-card"><span>Клиенты</span><strong>{{ report.clients }}</strong><small>Записей в справочнике</small>
+    </div>
+    <div class="stat-card"><span>Сотрудники</span><strong>{{ report.employees }}</strong><small>Записей в
+        справочнике</small></div>
+    <div class="stat-card wide-stat"><span>Среднее время выполнения</span><strong>{{ report.average_hours if
+        report.average_hours is not none else '—' }}{% if report.average_hours is not none %} ч.{% endif
+        %}</strong><small>Рассчитывается по закрытым заявкам, у которых указаны даты создания и завершения.</small>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Сотрудники — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">СПРАВОЧНИК</div>
+        <h1>Сотрудники</h1>
+        <p class="muted">Специалисты, обрабатывающие заявки</p></div>
+</div>
+{% if current_user.role == 'admin' %}
+<form method="post" class="inline-form"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><input
+        name="name" required placeholder="ФИО сотрудника"><input name="job" required placeholder="Должность"><input
+        name="experience" type="number" min="0" value="0" placeholder="Опыт, лет"><input name="start_working"
+                                                                                         type="date"
+                                                                                         aria-label="Дата начала работы"><select
+        name="status">
+    <option>Работает</option>
+    <option>Отпуск</option>
+    <option>Уволен</option>
+</select>
+    <button class="btn primary" type="submit">＋ Добавить</button>
+</form>{% endif %}
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Сотрудник</th>
+                <th>Должность</th>
+                <th>Опыт</th>
+                <th>Дата начала</th>
+                <th>Статус</th>
+                {% if current_user.role == 'admin' %}
+                <th>Действия</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>{% for e in employees %}
+            <tr>
+                <td><strong>{{ e.name }}</strong></td>
+                <td>{{ e.job }}</td>
+                <td>{{ e.experience }} лет</td>
+                <td>{{ e.start_working or '—' }}</td>
+                <td><span
+                        class="status {{ 'status-closed' if e.status == 'Работает' else 'status-work' if e.status == 'Отпуск' else 'status-cancelled' }}">{{ e.status }}</span>
+                </td>
+                {% if current_user.role == 'admin' %}
+                <td class="actions-cell"><a class="btn small" href="{{ url_for('employee_edit', employee_id=e.id) }}">Изменить</a>
+                    <form method="post" action="{{ url_for('employee_delete', employee_id=e.id) }}"
+                          onsubmit="return confirm('Удалить сотрудника? Привязки к заявкам будут сброшены.');"><input
+                            type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <button class="btn small danger-outline" type="submit">Удалить</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="empty">Сотрудники не добавлены.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

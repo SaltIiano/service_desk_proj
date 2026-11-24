@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Клиенты — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">СПРАВОЧНИК</div>
+        <h1>Клиенты</h1>
+        <p class="muted">Частные лица и организации, создающие обращения</p></div>
+</div>
+{% if current_user.role == 'admin' %}
+<form method="post" class="inline-form"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><input
+        name="name" required placeholder="Имя или название организации"><select name="type">
+    <option>Частное лицо</option>
+    <option>Организация</option>
+</select><input name="phone" placeholder="Телефон"><input name="email" type="email" placeholder="Email">
+    <button class="btn primary" type="submit">＋ Добавить</button>
+</form>{% endif %}
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Клиент</th>
+                <th>Тип</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                {% if current_user.role == 'admin' %}
+                <th>Действия</th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody>{% for c in clients %}
+            <tr>
+                <td><strong>{{ c.name }}</strong></td>
+                <td>{{ c.type }}</td>
+                <td>{{ c.phone or '—' }}</td>
+                <td>{{ c.email or '—' }}</td>
+                {% if current_user.role == 'admin' %}
+                <td class="actions-cell"><a class="btn small" href="{{ url_for('client_edit', client_id=c.id) }}">Изменить</a>
+                    <form method="post" action="{{ url_for('client_delete', client_id=c.id) }}"
+                          onsubmit="return confirm('Удалить клиента? Привязки к заявкам будут сброшены.');"><input
+                            type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                        <button class="btn small danger-outline" type="submit">Удалить</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="empty">Клиенты не добавлены.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

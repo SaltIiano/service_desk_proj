@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Редактирование клиента — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">СПРАВОЧНИК</div>
+        <h1>Редактирование клиента</h1>
+        <p class="muted">Измените данные и сохраните результат</p></div>
+</div>
+<form method="post" class="form-card needs-validation"><input type="hidden" name="_csrf_token"
+                                                              value="{{ csrf_token() }}">
+    <label>Имя или название организации<input name="name" required maxlength="160" value="{{ client.name }}"></label>
+    <label>Тип клиента<select name="type">
+        <option value="Частное лицо" {{
+        'selected' if client.type == 'Частное лицо' }}>Частное лицо</option>
+        <option value="Организация" {{
+        'selected' if client.type == 'Организация' }}>Организация</option></select></label>
+    <label>Телефон<input name="phone" value="{{ client.phone }}"></label><label>Email<input name="email" type="email"
+                                                                                            value="{{ client.email }}"></label>
+    <div class="form-actions">
+        <button class="btn btn-primary primary" type="submit">Сохранить</button>
+        <a class="btn" href="{{ url_for('clients') }}">Отмена</a></div>
+</form>
+{% endblock %}

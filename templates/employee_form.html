@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Редактирование сотрудника — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">СПРАВОЧНИК</div>
+        <h1>Редактирование сотрудника</h1></div>
+</div>
+<form method="post" class="form-card needs-validation"><input type="hidden" name="_csrf_token"
+                                                              value="{{ csrf_token() }}">
+    <label>ФИО<input name="name" required maxlength="160" value="{{ employee.name }}"></label><label>Должность<input
+            name="job" required maxlength="120" value="{{ employee.job }}"></label>
+    <label>Опыт, лет<input name="experience" type="number" min="0" required
+                           value="{{ employee.experience }}"></label><label>Дата начала работы<input
+            name="start_working" type="date" value="{{ employee.start_working }}"></label>
+    <label>Статус<select name="status">{% for status in ['Работает','Отпуск','Уволен'] %}
+        <option {{
+        'selected' if employee.status == status }}>{{ status }}</option>{% endfor %}</select></label>
+    <div class="form-actions">
+        <button class="btn btn-primary primary" type="submit">Сохранить</button>
+        <a class="btn" href="{{ url_for('employees') }}">Отмена</a></div>
+</form>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Редактирование' if ticket else 'Новая заявка' }} — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div><a class="back-link" href="{{ url_for('index') }}">← К списку заявок</a>
+        <h1>{{ 'Редактирование заявки №' ~ ticket.number if ticket else 'Новая заявка' }}</h1>
+        <p class="muted">Заполните сведения об обращении</p></div>
+</div>
+<form method="post" class="form-card">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <div class="form-grid">
+        <label class="span-2">Тема заявки *<input name="title" maxlength="160" required
+                                                  value="{{ ticket.title if ticket else '' }}"
+                                                  placeholder="Например, не работает принтер"></label>
+        <label class="span-2">Описание проблемы *<textarea name="description" rows="5" maxlength="5000" required
+                                                           placeholder="Опишите проблему и ожидаемый результат">{{ ticket.description if ticket else '' }}</textarea></label>
+        <label>Клиент<select name="client_id">
+            <option value="">Не выбран</option>
+            {% for c in clients %}
+            <option value="{{ c._id }}" {% if ticket and ticket.client_id|string== c._id|string %}selected{% endif %}>{{
+                c.name }}
+            </option>
+            {% endfor %}</select></label>
+        <label>Исполнитель<select name="employee_id">
+            <option value="">Не назначен</option>
+            {% for e in employees %}
+            <option value="{{ e._id }}" {% if ticket and ticket.employee_id|string== e._id|string %}selected{% endif %}>
+                {{ e.name }} — {{ e.job }}
+            </option>
+            {% endfor %}</select></label>
+        <label class="span-2">Оборудование<select name="equipment_id">
+            <option value="">Не назначено</option>
+            {% for e in equipment %}
+            <option value="{{ e._id }}" {% if ticket and ticket.equipment_id|string== e._id|string %}selected{% endif
+                    %}>{{ e.name }} · {{ e.number }}
+            </option>
+            {% endfor %}</select></label>
+        {% if ticket %}
+        <label>Статус<select name="status">{% for s in statuses %}
+            <option {% if ticket.status== s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}</select></label>
+        <label>Прогресс, %<input type="number" name="progress" min="0" max="100" value="{{ ticket.progress }}"></label>
+        {% endif %}
+    </div>
+    <div class="form-actions"><a class="btn ghost" href="{{ url_for('index') }}">Отмена</a>
+        <button class="btn primary" type="submit">Сохранить заявку</button>
+    </div>
+    <p class="hint">* Обязательные поля</p>
+</form>
+{% endblock %}

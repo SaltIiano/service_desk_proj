@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Пользователи — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">АДМИНИСТРИРОВАНИЕ</div>
+        <h1>Пользователи</h1>
+        <p class="muted">Учётные записи и уровни доступа. Пароль: минимум 8 символов, хотя бы одна цифра и один
+            спецсимвол.</p></div>
+</div>
+<form method="post" class="inline-form"><input type="hidden" name="_csrf_token" value="{{ csrf_token() }}"><input
+        name="username" required minlength="3" placeholder="Логин"><input name="password" required minlength="8"
+                                                                          pattern="(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
+                                                                          title="Минимум 8 символов, цифра и спецсимвол"
+                                                                          type="password"
+                                                                          placeholder="Пароль: 8+, цифра, спецсимвол"><select
+        name="role">
+    <option value="user">Пользователь</option>
+    <option value="admin">Администратор</option>
+</select>
+    <button class="btn primary" type="submit">＋ Создать</button>
+</form>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Логин</th>
+                <th>Роль</th>
+                <th>Статус</th>
+                <th>Создан</th>
+            </tr>
+            </thead>
+            <tbody>{% for u in users %}
+            <tr>
+                <td><strong>{{ u.username }}</strong></td>
+                <td>{{ 'Администратор' if u.role == 'admin' else 'Пользователь' }}</td>
+                <td><span class="status {{ 'status-closed' if u.active else 'status-cancelled' }}">{{ 'Активен' if u.active else 'Отключён' }}</span>
+                </td>
+                <td>{{ u.created_at|datetime }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="empty">Пользователи не найдены.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

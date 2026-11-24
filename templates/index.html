@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Заявки — Service Desk{% endblock %}
+{% block content %}
+<div class="page-heading">
+    <div>
+        <div class="eyebrow">ЦЕНТР ПОДДЕРЖКИ</div>
+        <h1>Заявки</h1>
+        <p class="muted">Приём и контроль обращений IT-поддержки</p></div>
+    <a class="btn primary" href="{{ url_for('ticket_new') }}">＋ Новая заявка</a>
+</div>
+<div class="toolbar">
+    <form class="filters" method="get">
+        <input name="q" value="{{ q }}" placeholder="Поиск по номеру или теме…" aria-label="Поиск">
+        <select name="status" aria-label="Статус">
+            <option value="">Все заявки</option>
+            {% for status in ['Открыта','В работе','Закрыта','Отменена'] %}
+            <option {% if selected_status== status %}selected{% endif %}>{{ status }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn secondary" type="submit">Применить</button>
+        {% if q or selected_status %}<a class="btn ghost" href="{{ url_for('index') }}">Сбросить</a>{% endif %}
+    </form>
+    <span class="result-count">{{ tickets|length }} заявок</span>
+</div>
+<div class="table-card">
+    <div class="table-scroll">
+        <table class="table table-hover align-middle">
+            <thead>
+            <tr>
+                <th>№ заявки</th>
+                <th>Тема</th>
+                <th>Клиент</th>
+                <th>Исполнитель</th>
+                <th>Прогресс</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for ticket in tickets %}
+            <tr class="ticket-row status-line-{{ 'open' if ticket.status == 'Открыта' else 'work' if ticket.status == 'В работе' else 'closed' if ticket.status == 'Закрыта' else 'cancelled' }}">
+                <td><a class="ticket-number" href="{{ url_for('ticket_detail', ticket_id=ticket.id) }}">{{ ticket.number
+                    }}</a></td>
+                <td><a class="ticket-title" href="{{ url_for('ticket_detail', ticket_id=ticket.id) }}">{{ ticket.title
+                    }}</a>
+                    <div class="small muted">{{ ticket.created_at|datetime }}</div>
+                </td>
+                <td>{{ ticket.client_name }}</td>
+                <td>{{ ticket.employee_name }}</td>
+                <td>
+                    <div class="progress"><span style="width: {{ ticket.progress }}%"></span></div>
+                    <span class="small muted">{{ ticket.progress }}%</span></td>
+                <td><span
+                        class="status status-{{ 'open' if ticket.status == 'Открыта' else 'work' if ticket.status == 'В работе' else 'closed' if ticket.status == 'Закрыта' else 'cancelled' }}">{{ ticket.status }}</span>
+                </td>
+                <td class="actions"><a class="icon-link" title="Открыть заявку"
+                                       href="{{ url_for('ticket_detail', ticket_id=ticket.id) }}">⌕</a></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="empty">Заявок пока нет. Создайте первую заявку.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
